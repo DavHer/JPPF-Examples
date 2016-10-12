@@ -11,14 +11,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jppf.node.protocol.AbstractTask;
 
-public class TemplateJPPFTask extends AbstractTask<Integer> {
+public class TemplateJPPFTask extends AbstractTask<Long> {
 
     private long from;
     private long to;
+    private String archivoNombre;
 
-    public TemplateJPPFTask(long from, long to) {
+    public TemplateJPPFTask(String archivoNombre, long from, long to) {
         this.from = from;
         this.to = to;
+        this.archivoNombre = archivoNombre;
     }
 
     public MappedByteBuffer abrirArchivo(String archivo) throws FileNotFoundException, IOException{
@@ -28,27 +30,42 @@ public class TemplateJPPFTask extends AbstractTask<Integer> {
         
         MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
         channel.close();
-        
-
-        // the buffer now reads the file as if it were loaded in memory.
-//        System.out.println(buffer.isLoaded());  //prints false
-//        System.out.println(buffer.capacity());  //Get the size based on content size of file
-//        System.out.println(buffer.limit());
         return buffer;
     }
 
-    public Integer contarNumeros(MappedByteBuffer buffer){
-        int primerIndex = 0;
-        int segundoIndex = 0;
+    public Integer tryParse(String text) {
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+    
+    private boolean isPrime(Integer num) {
+        if (num < 2) return false;
+        if (num == 2) return true;
+        if (num % 2 == 0) return false;
+        for (int i = 3; i * i <= num; i += 2)
+            if (num % i == 0) return false;
+        return true;
+    }
+    
+    private Long contarNumeros(MappedByteBuffer buffer){
         String numString = "";
-        Integer resultado = 0;
+        Long resultado = 0L;
         long bufferLimit = buffer.limit();
+        long porcentaje = to / 100;
+        Integer numero;
 
         for (long i = from; i < to; i++) {
+            if (i % porcentaje == 0) {
+                System.out.println(getId() + ": "+ (i/porcentaje) + "%");
+            }
             if (((char)buffer.get((int)i) == ' ' && i != 0) ||
                 i == bufferLimit) {
-                System.out.println(numString+"<<");
-                resultado += Integer.parseInt(numString);
+                
+                numero = tryParse(numString);
+                resultado += isPrime(numero)? numero : 0;
                 numString = "";
             }
             else {
@@ -62,23 +79,16 @@ public class TemplateJPPFTask extends AbstractTask<Integer> {
     @Override
     public void run() {
         // write your task code here.
-        Integer resultado = 0;
+        Long resultado = 0L;
         MappedByteBuffer buffer = null;
-        
-        System.out.println("Hello, this is the node executing a template JPPF task");
         try {
-            buffer = abrirArchivo("numeros.txt");
-            System.out.println("File loaded");
+            buffer = abrirArchivo(archivoNombre);
             resultado = contarNumeros(buffer);
-            System.out.println("contados");
         } catch (Exception ex) {
             ex.printStackTrace();
             Logger.getLogger(TemplateJPPFTask.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        // ...
-        // eventually set the execution results
-        System.out.println("Res: " + resultado);
         setResult(resultado);
     }
 }
