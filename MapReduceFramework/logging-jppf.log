@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="windows-1252" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2016-11-14T00:19:28</date>
+  <millis>1479104368509</millis>
+  <sequence>0</sequence>
+  <logger>ucr.jppf.framework.lib.Job</logger>
+  <level>SEVERE</level>
+  <class>ucr.jppf.framework.lib.Job</class>
+  <method>waitForCompletion</method>
+  <thread>1</thread>
+  <exception>
+    <message>java.lang.IllegalStateException: this job is already submitted</message>
+    <frame>
+      <class>org.jppf.client.JPPFClient</class>
+      <method>submitJob</method>
+      <line>141</line>
+    </frame>
+    <frame>
+      <class>ucr.jppf.framework.lib.Job</class>
+      <method>startReducer</method>
+      <line>125</line>
+    </frame>
+    <frame>
+      <class>ucr.jppf.framework.lib.Job</class>
+      <method>executeNonBlockingJob</method>
+      <line>163</line>
+    </frame>
+    <frame>
+      <class>ucr.jppf.framework.lib.Job</class>
+      <method>waitForCompletion</method>
+      <line>178</line>
+    </frame>
+    <frame>
+      <class>ucr.jppf.framework.Main</class>
+      <method>main</method>
+      <line>40</line>
+    </frame>
+  </exception>
+</record>
+</log>

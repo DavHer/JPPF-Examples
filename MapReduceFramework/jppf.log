@@ -1,0 +1,10 @@
+2016-11-14 01:15:09,101 [INFO ][org.jppf.utils.FileUtils.initJPPFTempDir(548)]: JPPF temp folder C:\Users\David\AppData\Local\Temp\.jppf
+2016-11-14 01:15:09,280 [INFO ][org.jppf.utils.VersionUtils.logVersionInformation(80)]: --------------------------------------------------------------------------------
+2016-11-14 01:15:09,280 [INFO ][org.jppf.utils.VersionUtils.logVersionInformation(81)]: JPPF Version: 5.2.2, Build number: 1878, Build date: 2016-09-30 11:03 CEST
+2016-11-14 01:15:09,280 [INFO ][org.jppf.utils.VersionUtils.logVersionInformation(82)]: starting client with PID=5340, UUID=CDF99BCF-BD9A-87E7-99A6-9ED9DDCE18F2
+2016-11-14 01:15:09,281 [INFO ][org.jppf.utils.VersionUtils.logVersionInformation(83)]: --------------------------------------------------------------------------------
+2016-11-14 01:15:11,481 [INFO ][org.jppf.client.AbstractGenericClient.newConnection(289)]: connection [jppf_discovery-1-1] created
+2016-11-14 01:15:11,494 [INFO ][org.jppf.client.ClassServerDelegateImpl.init(77)]: [client: jppf_discovery-1-1 - ClassServer] Attempting connection to the class server at DESKTOP-5AHVVVO:11111
+2016-11-14 01:15:11,519 [INFO ][org.jppf.client.ClassServerDelegateImpl.init(84)]: [client: jppf_discovery-1-1 - ClassServer] Reconnected to the class server
+2016-11-14 01:15:11,520 [INFO ][org.jppf.client.TaskServerConnectionHandler.init(79)]: [client: jppf_discovery-1-1 - TasksServer] Attempting connection to the task server at DESKTOP-5AHVVVO:11111
+2016-11-14 01:15:11,602 [INFO ][org.jppf.client.TaskServerConnectionHandler.init(93)]: [client: jppf_discovery-1-1 - TasksServer] Reconnected to the JPPF task server
