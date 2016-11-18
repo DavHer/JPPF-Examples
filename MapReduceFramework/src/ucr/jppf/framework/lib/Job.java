@@ -118,10 +118,10 @@ public class Job {
             from = to;
         }
     }
-    
+
     private void addReducer(final JPPFJob job, String name,
-                            HashMap<Bigrama, Integer> r1,
-                            HashMap<Bigrama, Integer> r2) throws Exception{
+            HashMap<Bigrama, Integer> r1,
+            HashMap<Bigrama, Integer> r2) throws Exception {
         Reducer reducer = reducerClass.newInstance();
         reducer.setHashMapLeft(r1);
         reducer.setHashMapRight(r2);
@@ -129,40 +129,42 @@ public class Job {
         task.setId(name);
     }
 
-    public void printHashMap(HashMap<Bigrama, Integer> resultado, String name){
+    public void printHashMap(HashMap<Bigrama, Integer> resultado, String name) {
         System.out.println("\n" + name);
         for (Map.Entry<Bigrama, Integer> entry : resultado.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
         System.out.println("");
     }
+
     private void executeNonBlockingJob(final JPPFClient jppfClient) throws Exception {
         HashMap<Bigrama, Integer> resultado = new HashMap<>();
         HashMap<Bigrama, Integer> resultado2 = new HashMap<>();
         job.setBlocking(true);
-        
+
         System.out.println("Submiting mappers");
         List<Task<?>> lista = jppfClient.submitJob(job);
-        job = new JPPFJob(name);
-        job.setBlocking(true);
-        int c = 0;
-        for(int i = 0; i < lista.size();i=i+2){
-            resultado = (HashMap<Bigrama, Integer>)lista.get(i).getResult();
-            printHashMap(resultado, lista.get(i).getId());
-            if(i+1 < lista.size()){
-                resultado2 = (HashMap<Bigrama, Integer>)lista.get(i+1).getResult();
-                printHashMap(resultado2, lista.get(i+1).getId());
-            }
-            addReducer(job, "reducer " + c++, resultado, resultado2);
 
-            resultado = new HashMap<>();
-            resultado2 = new HashMap<>();
-        }
-        System.out.println("\n\nSubmiting reducer");
-        lista = jppfClient.submitJob(job);
-        for(int i=0;i<lista.size();i++){
-            resultado = (HashMap<Bigrama, Integer>)lista.get(i).getResult();
-            printHashMap(resultado, lista.get(i).getId());
+        while (lista.size() > 1) {
+            job = new JPPFJob(name);
+            job.setBlocking(true);
+            int c = 0;
+            for (int i = 0; i < lista.size(); i = i + 2) {
+                resultado = (HashMap<Bigrama, Integer>) lista.get(i).getResult();
+                printHashMap(resultado, lista.get(i).getId());
+                if (i + 1 < lista.size()) {
+                    resultado2 = (HashMap<Bigrama, Integer>) lista.get(i + 1).getResult();
+                    printHashMap(resultado2, lista.get(i + 1).getId());
+                }
+                addReducer(job, "reducer " + c++, resultado, resultado2);
+                resultado2 = new HashMap<>();
+            }
+            System.out.println("\n\nSubmiting reducer");
+            lista = jppfClient.submitJob(job);
+            for (int i = 0; i < lista.size(); i++) {
+                resultado = (HashMap<Bigrama, Integer>) lista.get(i).getResult();
+                printHashMap(resultado, lista.get(i).getId());
+            }
         }
     }
 
