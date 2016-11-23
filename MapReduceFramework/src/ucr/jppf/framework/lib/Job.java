@@ -99,7 +99,9 @@ public class Job {
 
         file = new File(inputPath);
         fileChannel = new RandomAccessFile(file, "r").getChannel();
+        System.out.println("size="+fileChannel.size()+" MAX_VALUE="+Integer.MAX_VALUE);
         size = fileChannel.size() % Integer.MAX_VALUE;
+        System.out.println("size="+size);
 
         fileChannel.close();
 
