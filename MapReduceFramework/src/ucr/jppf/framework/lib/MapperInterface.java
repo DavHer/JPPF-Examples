@@ -12,5 +12,5 @@ import java.nio.MappedByteBuffer;
  * @author David
  */
 public interface MapperInterface {
-    public void map(MappedByteBuffer buffer);
+    public void map(String line);
 }

@@ -170,11 +170,16 @@ public class Job {
         }
     }
 
+    private void executenBlockingJob(final JPPFClient jppfClient) throws Exception {
+        job.setBlocking(true);
+        jppfClient.submitJob(job);
+    }
+    
     public boolean waitForCompletion(boolean vervose) {
 
         try (JPPFClient jppfClient = new JPPFClient()) {
             prepareJob();
-            executeNonBlockingJob(jppfClient);
+            executenBlockingJob(jppfClient);
         } catch (Exception ex) {
             Logger.getLogger(Job.class.getName()).log(Level.SEVERE, null, ex);
             return false;

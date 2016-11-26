@@ -6,36 +6,41 @@
 package ucr.jppf.framework.lib;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Scanner;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.LineIterator;
 import org.jppf.node.protocol.AbstractTask;
 
 /**
  *
  * @author David
  */
-public abstract class Mapper<K, V>
-        extends AbstractTask<HashMap<K, V>>
+public abstract class Mapper<K>
+        extends AbstractTask<HashMap<K, Integer>>
         implements MapperInterface {
 
-    HashMap<K, V> hashMap;
+    HashMap<K, Integer> hashMap;
     long bufferLength;
     long bufferInit;
     String arch;
 
-    public HashMap<K, V> getHashMap() {
-        return hashMap;
+    public void write(K key, Integer cant) {
+        Integer valor = hashMap.get(key);
+        if (valor == null) {
+            hashMap.put(key, cant);
+        } else {
+            hashMap.put(key, valor + cant);
+        }
     }
 
     public long getBufferInit() {
@@ -59,8 +64,7 @@ public abstract class Mapper<K, V>
         File file = new File(f);
         MappedByteBuffer buffer;
         try (FileChannel channel = new RandomAccessFile(file, "r").getChannel()) {
-            long size = channel.size() % Integer.MAX_VALUE;
-            buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, size);
+            buffer = channel.map(FileChannel.MapMode.READ_ONLY, bufferInit, bufferLength - bufferInit);
         }
         return buffer;
     }
@@ -68,20 +72,44 @@ public abstract class Mapper<K, V>
     @Override
     public void run() {
         hashMap = new HashMap<>();
-        MappedByteBuffer buffer = null;
+        
+        LineIterator it = null;
         try {
-            buffer = openFile(arch);
-            map(buffer);
+            File file = new File(arch);
+            it = FileUtils.lineIterator(file, "UTF-8");
+            long cont = 0;
+            String line = "";
+            while (it.hasNext()) {
+                line = it.nextLine();
+                System.out.println(line);
+                cont = cont + line.length();
+                if(cont >= bufferInit){
+                    break;
+                }
+            }
+            
+            map(line);
+            while (it.hasNext()) {
+                line = it.nextLine();
+                cont = cont + line.length();
+                map(line);
+                if(cont >= bufferLength)
+                    break;
+            }
+            
         } catch (Exception ex) {
             ex.printStackTrace();
+        } finally {
+            LineIterator.closeQuietly(it);
         }
-
         Properties properties = new Properties();
-        for (Map.Entry<K, V> entry : hashMap.entrySet()) {
+        for (Map.Entry<K, Integer> entry : hashMap.entrySet()) {
             properties.put(entry.getKey().toString(), entry.getValue() + "");
         }
         try {
-            properties.store(new FileOutputStream(getId() + ".txt"), null);
+            FileOutputStream st = new FileOutputStream(getId() + ".txt");
+            properties.store(st, null);
+            st.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
