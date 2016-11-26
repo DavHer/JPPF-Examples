@@ -92,7 +92,7 @@ public abstract class Mapper<K>
             while (it.hasNext()) {
                 line = it.nextLine();
                 cont = cont + line.length();
-                float n = (cont - bufferInit)/(bufferLength-bufferInit) * 100;
+                float n = (float)(cont - bufferInit)/(float)(bufferLength-bufferInit) * 100;
                 if(n%10==0 && n!=0)
                     System.out.println(n + "%");
                 map(line);
