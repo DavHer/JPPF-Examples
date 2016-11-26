@@ -81,7 +81,6 @@ public abstract class Mapper<K>
             String line = "";
             while (it.hasNext()) {
                 line = it.nextLine();
-                System.out.println(line);
                 cont = cont + line.length();
                 if(cont >= bufferInit){
                     break;
@@ -94,7 +93,7 @@ public abstract class Mapper<K>
                 line = it.nextLine();
                 cont = cont + line.length();
                 float n = (cont - bufferInit)/(bufferLength-bufferInit) * 100;
-                if(n%10==0)
+                if(n%10==0 && n!=0)
                     System.out.println(n + "%");
                 map(line);
                 if(cont >= bufferLength)
