@@ -72,7 +72,7 @@ public abstract class Mapper<K>
     @Override
     public void run() {
         hashMap = new HashMap<>();
-        
+        System.out.println("Node start executing " + getId());
         LineIterator it = null;
         try {
             File file = new File(arch);
@@ -87,6 +87,7 @@ public abstract class Mapper<K>
                     break;
                 }
             }
+            System.out.println("Node buffer init " + getId());
             
             map(line);
             while (it.hasNext()) {
@@ -99,6 +100,8 @@ public abstract class Mapper<K>
                 if(cont >= bufferLength)
                     break;
             }
+            
+            System.out.println("Node finish parsing file " + getId());
             
         } catch (Exception ex) {
             ex.printStackTrace();
