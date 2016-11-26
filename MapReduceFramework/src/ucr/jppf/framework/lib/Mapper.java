@@ -119,7 +119,7 @@ public abstract class Mapper<K>
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
+        hashMap.clear();
         setResult(hashMap);
     }
 
