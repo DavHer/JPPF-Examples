@@ -87,17 +87,18 @@ public abstract class Mapper<K>
                 }
             }
             System.out.println("Node buffer init " + getId());
-            
+            long last_n = 0;
             map(line);
             while (it.hasNext()) {
                 line = it.nextLine();
                 cont = cont + line.length();
                 float n = (float)(cont - bufferInit)/(float)(bufferLength-bufferInit) * 100;
-                if(n%10==0 && n!=0)
+                if(((long)n) != last_n && ((long)n)%10==0 && n!=0)
                     System.out.println(n + "%");
                 map(line);
                 if(cont >= bufferLength)
                     break;
+                last_n = (long)n;
             }
             
             System.out.println("Node finish parsing file " + getId());
