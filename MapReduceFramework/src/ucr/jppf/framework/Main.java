@@ -23,7 +23,7 @@ public class Main {
         job.setMapperClass(BigramCountMapper.class);
         job.setCombinerClass(BigramCountReducer.class);
         job.setReducerClass(BigramCountReducer.class);
-        job.setNumMapTasks(32);
+        job.setNumMapTasks(4);
 
         // Specify key / value
         job.setOutputKeyClass(Bigrama.class);
