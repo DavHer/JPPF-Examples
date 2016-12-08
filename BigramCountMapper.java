@@ -9,8 +9,6 @@ public class BigramCountMapper extends
 
     private final IntWritable ONE = new IntWritable(1);
 
-
-
     public void map(Object key, Text value, Context context)
             throws IOException, InterruptedException {
 
